@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#355E3B">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Gerald's Snack Panic 🐸</title>
+<title>Gerald's snack panic 🐵</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -209,8 +209,8 @@ $('mute').addEventListener('click', e => {
 const SNACKS = ['🍕','🍩','🧀','🍓','🥑','🍪','🧁','🍟','🌮','🍉','🥐','🍔','🥨','🍒'];
 const FROG_NOM = ['nom!','yum!','delish','mmm','crunchy','chef\'s kiss','more pls','tasty!','burp','wow','yes yes yes','10/10','snack!!','gimme','tehe'];
 const FROG_SOCK = ['that is a SOCK','why','who did this','ew ew ew','tastes like Tuesday','I\'ve made a mistake','sir this is a sock','not the sock!','eww feet','blegh'];
-const FROG_DUCK = ['quack?? I\'m a frog','he\'s my cousin','squeaky!','a duck?! in THIS economy','I am a duck now','QUACK','hello fellow aquatic'];
-const FROG_MISS = ['my snack :(','noooo','come back','I saw that','rude','sad frog noises','the floor gets it','5 second rule?'];
+const FROG_DUCK = ['quack?? I\'m a monkey','he\'s my cousin','squeaky!','a duck?! in THIS economy','I am a duck now','QUACK','hello fellow aquatic'];
+const FROG_MISS = ['my snack :(','noooo','come back','I saw that','rude','sad monkey noises','the floor gets it','5 second rule?'];
 const FROG_HOT = ['HOT HOT HOT','MY TONGUE','I CAN SEE SOUNDS','spicy spicy spicy','WHY AM I BACKWARDS'];
 const FROG_GOLD = ['GOLDEN SNACC','I\'m rich!','SHINY!!','ascended','best day ever'];
 
@@ -236,7 +236,6 @@ const INTERLUDES = [
 
 /* ---------- state ---------- */
 let state = 'menu';   // menu | ready | play | between | end
-let name = 'Mystery Human';
 let G = null;
 let items = [], particles = [], floaters = [];
 let bubble = { text:'', t:0 };
@@ -282,19 +281,15 @@ function showMenu(){
   state = 'menu';
   $('hud').classList.remove('on'); $('timerbar').classList.remove('on');
   showCard(`
-    <div class="big">🐸</div>
-    <h1>Gerald's<br>Snack Panic</h1>
-    <p>Gerald is a very hungry frog.<br>Slide your finger to feed him.<br>Please avoid the socks.</p>
-    <input id="nameIn" maxlength="14" placeholder="What's your name, hungry human?" autocomplete="off">
-    <button class="btn" id="goBtn">Feed Gerald 🍕</button>
-    <p class="sub">~4 min · 3 rounds · sound on for max silliness</p>
+    <div class="big">🐵</div>
+    <h1>Gerald's<br>snack panic</h1>
+    <p>Gerald is a very hungry monkey.<br>Slide your finger to feed him.<br>Please avoid the socks.</p>
+    <button class="btn" id="goBtn">Feed me</button>
   `);
   $('goBtn').onclick = () => {
     initAudio(); sfx.click();
-    name = ($('nameIn').value || '').trim() || 'Mystery Human';
     newGame(); startRound();
   };
-  $('nameIn').addEventListener('keydown', e => { if (e.key==='Enter') $('goBtn').click(); });
 }
 
 function showInterlude(){
@@ -325,7 +320,7 @@ function showInterlude(){
 function rankFor(s){
   if (s < 40)  return ['Gentle Snack Sprout 🌱','Gerald is proud. Mostly confused, but proud.'];
   if (s < 90)  return ['Certified Snack Goblin 🧌','Gerald would like to see you again. Immediately.'];
-  if (s < 150) return ['Frog Whisperer 🪷','Gerald has named his firstborn after you.'];
+  if (s < 150) return ['Monkey Whisperer 🙈','Gerald has named his firstborn after you.'];
   if (s < 220) return ['Snack Sorceress ✨','The snacks fear you. The socks respect you.'];
   return ['Supreme Snack Overlord 👑','Gerald bows. The ducks are in awe. Wow.'];
 }
@@ -343,7 +338,7 @@ function showEnd(){
     <div class="title-badge">${title}</div>
     <div class="score-big">${G.score}</div>
     <div class="best">${newBest ? '🎉 New personal best!' : 'Best: '+best}</div>
-    <p>${esc(name)}, ${quip}</p>
+    <p>${quip}</p>
     <ul class="stats">
       <li>Snacks devoured <b>${s.snacks} 🍕</b></li>
       <li>${sockLine} <b>${s.socks} 🧦</b></li>
@@ -351,8 +346,7 @@ function showEnd(){
       <li>Spicy peppers regretted <b>${s.peppers} 🌶️</b></li>
       <li>Best combo <b>${G.maxCombo} 🔥</b></li>
     </ul>
-    <button class="btn" id="againBtn">One more round? 🐸</button>
-    <p class="sub">P.S. Gerald was made with love just for you, ${esc(name)} 💚</p>
+    <button class="btn" id="againBtn">One more round? 🐵</button>
   `);
   $('againBtn').onclick = () => { initAudio(); sfx.click(); showMenu(); };
 }
@@ -562,67 +556,97 @@ function drawFrog(time){
   const sx = 1 + sq*.14, sy = 1 - sq*.16;
   const bob = Math.sin(time*3)*1.5;
   const rx = fw*.5, ry = fw*.4;
+  const hot = clamp(frog.hot, 0, 1);
+  const fur = hot > 0 ? `rgb(${Math.round(lerp(139,214,hot))},${Math.round(lerp(94,110,hot))},${Math.round(lerp(60,80,hot))})` : '#8b5e3c';
+  const tan = hot > 0 ? '#ffd9c2' : '#f0cfa0';
+  const line = '#3a2415';
 
   ctx.save();
   ctx.translate(x, y + bob + (1-sy)*ry);
   ctx.scale(sx, sy);
+  ctx.strokeStyle = line; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
-  // legs
-  ctx.fillStyle = '#6fb85f'; ctx.strokeStyle = '#1e3a24'; ctx.lineWidth = 3;
+  // tail
+  const wag = Math.sin(time*4)*.15;
+  ctx.beginPath();
+  ctx.moveTo(rx*.8, ry*.5);
+  ctx.bezierCurveTo(rx*1.5, ry*.7+wag*ry, rx*1.7, -ry*.2, rx*1.25, -ry*.5+wag*ry*2);
+  ctx.lineWidth = 7; ctx.strokeStyle = line; ctx.stroke();
+  ctx.lineWidth = 3.5; ctx.strokeStyle = fur; ctx.stroke();
+  ctx.lineWidth = 3; ctx.strokeStyle = line;
+
+  // feet
+  ctx.fillStyle = tan;
   [-1,1].forEach(s => {
-    ctx.beginPath(); ctx.ellipse(s*rx*.8, ry*.6, rx*.32, ry*.32, s*.3, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(s*rx*.6, ry*.85, rx*.3, ry*.2, 0, 0, 7); ctx.fill(); ctx.stroke();
   });
 
   // body
-  const hot = clamp(frog.hot, 0, 1);
-  ctx.fillStyle = hot > 0 ? `rgb(${Math.round(lerp(143,236,hot))},${Math.round(lerp(207,110,hot))},${Math.round(lerp(126,100,hot))})` : '#8fcf7e';
+  ctx.fillStyle = fur;
   ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, 7); ctx.fill(); ctx.stroke();
 
   // belly
-  ctx.fillStyle = hot > 0 ? '#ffd9c2' : '#d9f2c4';
-  ctx.beginPath(); ctx.ellipse(0, ry*.35, rx*.7, ry*.5, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = tan;
+  ctx.beginPath(); ctx.ellipse(0, ry*.4, rx*.62, ry*.5, 0, 0, 7); ctx.fill();
+
+  // ears
+  [-1,1].forEach(s => {
+    const ex = s*rx*.95, ey = -ry*.55;
+    ctx.fillStyle = fur;
+    ctx.beginPath(); ctx.arc(ex, ey, fw*.15, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = tan;
+    ctx.beginPath(); ctx.arc(ex, ey, fw*.09, 0, 7); ctx.fill();
+  });
+
+  // face mask
+  ctx.fillStyle = tan;
+  ctx.beginPath();
+  ctx.ellipse(-rx*.32, -ry*.5, rx*.42, ry*.42, 0, 0, 7);
+  ctx.ellipse(rx*.32, -ry*.5, rx*.42, ry*.42, 0, 0, 7);
+  ctx.ellipse(0, -ry*.12, rx*.62, ry*.5, 0, 0, 7);
+  ctx.fill();
 
   // eyes
-  const er = fw*.17;
+  const er = fw*.1;
   const t = frog.lookTarget;
   let lx = frog.lookX*er*.35, ly = 0;
   if (t){ const dx = t.x - x, dy = t.y - y; const d = Math.hypot(dx,dy)||1; lx += dx/d*er*.4; ly = dy/d*er*.4; }
   const blinking = frog.blink < 0;
   [-1,1].forEach(s => {
-    const ex = s*rx*.5, ey = -ry*.95;
-    ctx.fillStyle = '#8fcf7e';
-    if (hot>0) ctx.fillStyle = ctx.fillStyle; 
-    ctx.beginPath(); ctx.arc(ex, ey, er*1.25, 0, 7); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(ex, ey, er, 0, 7); ctx.fill();
+    const ex = s*rx*.32, ey = -ry*.55;
     if (blinking){
-      ctx.fillStyle = '#8fcf7e'; ctx.fillRect(ex-er-1, ey-er-1, er*2+2, er*1.1);
       ctx.beginPath(); ctx.moveTo(ex-er, ey); ctx.lineTo(ex+er, ey); ctx.stroke();
     } else {
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(ex, ey, er*1.15, 0, 7); ctx.fill(); ctx.lineWidth = 2.5; ctx.stroke(); ctx.lineWidth = 3;
       ctx.fillStyle = '#10200f';
-      const pr = hot>0 ? er*.7 : er*.55;
+      const pr = hot>0 ? er*.8 : er*.65;
       ctx.beginPath(); ctx.arc(ex+lx, ey+ly, pr, 0, 7); ctx.fill();
       ctx.fillStyle = '#fff';
       ctx.beginPath(); ctx.arc(ex+lx-pr*.3, ey+ly-pr*.35, pr*.28, 0, 7); ctx.fill();
     }
   });
 
+  // nostrils
+  ctx.fillStyle = line;
+  [-1,1].forEach(s => { ctx.beginPath(); ctx.ellipse(s*rx*.07, -ry*.2, 2.2, 3, 0, 0, 7); ctx.fill(); });
+
   // cheeks
-  ctx.fillStyle = 'rgba(245,163,183,.75)';
-  [-1,1].forEach(s => { ctx.beginPath(); ctx.ellipse(s*rx*.72, ry*.12, fw*.07, fw*.045, 0, 0, 7); ctx.fill(); });
+  ctx.fillStyle = 'rgba(245,130,150,.6)';
+  [-1,1].forEach(s => { ctx.beginPath(); ctx.ellipse(s*rx*.6, -ry*.15, fw*.06, fw*.04, 0, 0, 7); ctx.fill(); });
 
   // mouth
   const m = frog.mouth;
-  const mw = rx*.55;
+  const mw = rx*.4;
   if (m > .08){
-    const mh = ry*.15 + m*ry*.8;
+    const mh = ry*.1 + m*ry*.6;
     ctx.fillStyle = '#4a1822';
-    ctx.beginPath(); ctx.ellipse(0, ry*.1 + mh*.15, mw, mh, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0, ry*.05 + mh*.15, mw, mh, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
     ctx.fillStyle = '#f5a3b7';
-    ctx.beginPath(); ctx.ellipse(0, ry*.1 + mh*.7, mw*.55, mh*.4, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0, ry*.05 + mh*.7, mw*.55, mh*.4, 0, 0, Math.PI*2); ctx.fill();
   } else {
-    ctx.strokeStyle = '#1e3a24'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.arc(0, ry*.0, mw*.8, .15*Math.PI, .85*Math.PI); ctx.stroke();
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, -ry*.12, mw*.8, .15*Math.PI, .85*Math.PI); ctx.stroke();
   }
   ctx.restore();
 
